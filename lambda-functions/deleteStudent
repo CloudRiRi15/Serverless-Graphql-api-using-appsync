@@ -1,1 +1,22 @@
+const AWS = require('aws-sdk')
+const dynamodb = new AWS.DynamoDB()
 
+const tableName = process.env.TABLE_NAME
+
+exports.handler = async event => {
+  const params = {
+    TableName: DYNAMODB,
+    Key: {
+      id: event.id
+    }
+  };
+
+    return dynamodb.deleteItem(params).promise()
+        .then(data => {
+            console.log(data)
+            return {
+               studentId
+            }
+        })
+        .catch(err => console.log(err))
+};
