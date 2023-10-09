@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  CreateStudentFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: .
+      Handler: create_student.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref StudentTable
+      Events:
+        CreateStudentApiEvent:
+          Type: Api
+          Properties:
+            Path: /create-student
+            Method: POST
+
+  # Define similar resources for update, delete, and get Lambda functions
+
+  StudentTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: StudentTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  # Define API Gateway resource
+  StudentApi:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: prod
+
+Outputs:
+  ApiUrl:
+    Description: 'API Gateway URL'
+    Value: !Sub 'https://${StudentApi}.execute-api.${AWS::Region}.amazonaws.com/prod/'
